@@ -28,6 +28,7 @@
 
     <div class="container body-content">
         @RenderBody()
+        @RenderSection("iframega", required: false)
         <hr />
         <footer>
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
@@ -94,6 +95,6 @@
             ga('send', 'pageview');
         </script>
     }
-    @RenderSection("iframega", required: false)
+   
 </body>
 </html>
