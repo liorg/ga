@@ -1,0 +1,11 @@
+﻿@Model WorkAroundGoogleAnalytics.Models.Response
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+@section iframega
+{
+    <iframe height="0" width="0" id="gaframe" src="/t/hit.html?t=@Model.Recipe.RecipeId"></iframe>
+}
