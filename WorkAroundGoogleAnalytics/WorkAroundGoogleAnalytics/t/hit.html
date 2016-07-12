@@ -40,34 +40,36 @@
             var track = "yes";
             if (isvalid == true)
                 track = "no";
-
-            // if (!hasCallback) {
             debugger;
             var src = "";
             var s = (stop * timeout);
             var cokie = googleClientId == "" ? cokname + repid : googleClientId;
             var sessionid = cokname + repid + "." + random;
-            src = "/t/logs.ashx?ses=" + sessionid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
+            src = "/t/logs.ashx?lo=no&ses=" + sessionid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
             var src = src + repid + "&r=" + random;
             if (ToSubmitGa(repid, true) || isvalid == true) {
-                call(src);
+                call(src, false);
             }
-
-            //hasCallback = true;
-
-            //if (!isvalid || googleClientId == "")
-            //    debugger;
-            //    window['ga-disable-UA-57229912-1'] = true;//prevent duplicate
-            // }
         }
 
         window.onload = function () {
+            debugger;
+            var src = "";
+            var track = "no";
+            var s = (stop * timeout);
+            var action = "load";
+            var cokie = googleClientId == "" ? cokname + repid : googleClientId;
+            var sessionid = cokname + repid + "." + random;
+            src = "/t/logs.ashx?lo=yes&ses=" + sessionid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
+            var src = src + repid + "&r=" + random;
+            call(src, true);
             setInterval(function () {
                 stop++;
             }, timeout);
+
         }
 
-        function call(file) {
+        function call(file, async) {
             var xhttp;
             if (window.XMLHttpRequest) {
                 // code for modern browsers
@@ -82,7 +84,7 @@
                     debugger;
                 }
             };
-            xhttp.open("GET", file, false);
+            xhttp.open("GET", file, async);
             xhttp.send();
         }
 

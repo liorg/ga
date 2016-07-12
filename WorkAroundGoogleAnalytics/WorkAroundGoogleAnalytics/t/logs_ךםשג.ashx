@@ -49,7 +49,6 @@ public class Ping : IHttpHandler
         string action = "";
         string track = "no";
         string sessionId = "";
-        string load = "no";
         if (context.Request["t"] != null && !String.IsNullOrEmpty(context.Request["t"].ToString()))
             t = context.Request["t"].ToString();
 
@@ -68,12 +67,8 @@ public class Ping : IHttpHandler
         if (context.Request["ta"] != null && !String.IsNullOrEmpty(context.Request["ta"].ToString()))
             track = context.Request["ta"].ToString();
 
-        if (context.Request["ses"] != null && !String.IsNullOrEmpty(context.Request["ses"].ToString()))
+         if (context.Request["ses"] != null && !String.IsNullOrEmpty(context.Request["ses"].ToString()))
             sessionId = context.Request["ses"].ToString();
-
-        if (context.Request["lo"] != null && !String.IsNullOrEmpty(context.Request["lo"].ToString()))
-            load = context.Request["lo"].ToString();
-
         if (random == "")
         {
             int randomvar = new Random().Next(int.MinValue, int.MaxValue);
@@ -99,13 +94,13 @@ public class Ping : IHttpHandler
                                                 ,[Browser]  ,[Platform]  ,[IsMobile] ,[IsCrawler] ,[CookieId]
                                                 ,[IdentityName] ,[IsAuthenticated]
                                                 ,[Path]  ,[QueryString]
-                                                ,[TimeStamp]  ,[Year]  ,[Month],[Track],[SessionId],[isLoad])
+                                                ,[TimeStamp]  ,[Year]  ,[Month],[Track],[SessionId])
                                              VALUES
                                                    (@RecipeId,@ip 
                                                    ,@brow  ,@plat ,@IsMobile  ,@IsCrawler 
                                                    ,@CookieId, @IdentityName ,@IsAuthenticated
                                                    ,@Path,  @QueryString
-                                                   ,@TimeStamp, @Year ,@Month,@Track,@SessionId,@isload)";
+                                                   ,@TimeStamp, @Year ,@Month,@Track,@SessionId)";
 
                         var request = context.Request;
 
@@ -136,9 +131,6 @@ public class Ping : IHttpHandler
 
                         command.Parameters.AddWithValue("@Track", track);
                         command.Parameters.AddWithValue("@SessionId", sessionId);
-
-                        command.Parameters.AddWithValue("@isload", load == "yes" ? true : false);
-
                         command.ExecuteNonQuery();
 
                         try

@@ -26,6 +26,7 @@ CREATE TABLE [dbo].[gaTrack](
 	[Track] [nvarchar](10) NOT NULL,
 	[RecipeId] [int] NOT NULL,
 	[SessionId] [nvarchar](max) NULL,
+	[isLoad] [bit] NOT NULL
  CONSTRAINT [PK_gaTrack] PRIMARY KEY CLUSTERED 
 (
 	[gaid] ASC

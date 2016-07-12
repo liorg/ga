@@ -27,7 +27,7 @@ public class Ping : IHttpHandler
             using (SqlCommand command = connection.CreateCommand())
             {
 
-                command.CommandText = "select count(*) from [imaotDb].[dbo].[gaTrack] where  RecipeId=@track";
+                command.CommandText = "select count(*) from [imaotDb].[dbo].[gaTrack] where  RecipeId=@track and isload=0";
                 command.Parameters.AddWithValue("@track", t);
                 try
                 {
