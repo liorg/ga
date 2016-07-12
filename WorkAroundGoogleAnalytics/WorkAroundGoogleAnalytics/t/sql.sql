@@ -1,7 +1,7 @@
 ﻿USE [imaotDb]
 GO
 
-/****** Object:  Table [dbo].[gaTrack]    Script Date: 7/12/2016 9:25:49 AM ******/
+/****** Object:  Table [dbo].[gaTrack]    Script Date: 7/12/2016 11:29:05 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -15,7 +15,7 @@ CREATE TABLE [dbo].[gaTrack](
 	[Platform] [nvarchar](100) NULL,
 	[IsMobile] [bit] NOT NULL,
 	[IsCrawler] [bit] NOT NULL,
-	[CookieId1] [nvarchar](128) NULL,
+	[CookieId] [nvarchar](128) NULL,
 	[IdentityName] [nvarchar](max) NULL,
 	[IsAuthenticated] [bit] NOT NULL,
 	[Path] [nvarchar](max) NULL,
@@ -24,6 +24,8 @@ CREATE TABLE [dbo].[gaTrack](
 	[Year] [smallint] NOT NULL,
 	[Month] [smallint] NOT NULL,
 	[Track] [nvarchar](10) NOT NULL,
+	[RecipeId] [int] NOT NULL,
+	[SessionId] [nvarchar](max) NULL,
  CONSTRAINT [PK_gaTrack] PRIMARY KEY CLUSTERED 
 (
 	[gaid] ASC

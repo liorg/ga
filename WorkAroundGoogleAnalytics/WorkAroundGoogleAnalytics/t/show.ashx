@@ -8,9 +8,6 @@ using System.Data;
 using System.Data.SqlClient;
 public class Ping : IHttpHandler
 {
-    // static string deviceid = "";
-   
-
     public void ProcessRequest(HttpContext context)
     {
         context.Response.ContentType = "application/json";
@@ -30,7 +27,7 @@ public class Ping : IHttpHandler
             using (SqlCommand command = connection.CreateCommand())
             {
 
-                command.CommandText = "select count(*) from [imaotDb].[dbo].[gaTrack] where  track=@track";
+                command.CommandText = "select count(*) from [imaotDb].[dbo].[gaTrack] where  RecipeId=@track";
                 command.Parameters.AddWithValue("@track", t);
                 try
                 {
