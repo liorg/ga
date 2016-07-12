@@ -36,6 +36,23 @@
             forceGooTrack(false, 'UnLoad');
         }
 
+        window.onload = function () {
+            debugger;
+            var src = "";
+            var track = "no";
+            var s = (stop * timeout);
+            var action = "load";
+            var cokie = googleClientId == "" ? cokname + repid : googleClientId;
+            var sessionid = cokname + repid + "." + random;
+            src = "/t/logs.ashx?lo=yes&ses=" + sessionid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
+            var src = src + repid + "&r=" + random;
+            call(src, false);
+            setInterval(function () {
+                stop++;
+            }, timeout);
+
+        }
+
         function forceGooTrack(isvalid, action) {
             var track = "yes";
             if (isvalid == true)
@@ -50,23 +67,6 @@
             if (ToSubmitGa(repid, true) || isvalid == true) {
                 call(src, false);
             }
-        }
-
-        window.onload = function () {
-            debugger;
-            var src = "";
-            var track = "no";
-            var s = (stop * timeout);
-            var action = "load";
-            var cokie = googleClientId == "" ? cokname + repid : googleClientId;
-            var sessionid = cokname + repid + "." + random;
-            src = "/t/logs.ashx?lo=yes&ses=" + sessionid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
-            var src = src + repid + "&r=" + random;
-            call(src, true);
-            setInterval(function () {
-                stop++;
-            }, timeout);
-
         }
 
         function call(file, async) {
