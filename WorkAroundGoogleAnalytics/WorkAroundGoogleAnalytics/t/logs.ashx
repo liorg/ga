@@ -48,6 +48,7 @@ public class Ping : IHttpHandler
         string random = "";
         string action = "";
         string track = "no";
+        string sessionId = "";
         if (context.Request["t"] != null && !String.IsNullOrEmpty(context.Request["t"].ToString()))
             t = context.Request["t"].ToString();
 
@@ -66,6 +67,8 @@ public class Ping : IHttpHandler
         if (context.Request["ta"] != null && !String.IsNullOrEmpty(context.Request["ta"].ToString()))
             track = context.Request["ta"].ToString();
 
+         if (context.Request["ses"] != null && !String.IsNullOrEmpty(context.Request["ses"].ToString()))
+            sessionId = context.Request["ses"].ToString();
         if (random == "")
         {
             int randomvar = new Random().Next(int.MinValue, int.MaxValue);
@@ -91,13 +94,13 @@ public class Ping : IHttpHandler
                                                 ,[Browser]  ,[Platform]  ,[IsMobile] ,[IsCrawler] ,[CookieId]
                                                 ,[IdentityName] ,[IsAuthenticated]
                                                 ,[Path]  ,[QueryString]
-                                                ,[TimeStamp]  ,[Year]  ,[Month],[Track])
+                                                ,[TimeStamp]  ,[Year]  ,[Month],[Track],[SessionId])
                                              VALUES
                                                    (@RecipeId,@ip 
                                                    ,@brow  ,@plat ,@IsMobile  ,@IsCrawler 
                                                    ,@CookieId, @IdentityName ,@IsAuthenticated
                                                    ,@Path,  @QueryString
-                                                   ,@TimeStamp, @Year ,@Month,@Track)";
+                                                   ,@TimeStamp, @Year ,@Month,@Track,@SessionId)";
 
                         var request = context.Request;
 
@@ -127,7 +130,7 @@ public class Ping : IHttpHandler
                         command.Parameters.AddWithValue("@Month", (Int16)dt.Month);
 
                         command.Parameters.AddWithValue("@Track", track);
-
+                        command.Parameters.AddWithValue("@SessionId", sessionId);
                         command.ExecuteNonQuery();
 
                         try

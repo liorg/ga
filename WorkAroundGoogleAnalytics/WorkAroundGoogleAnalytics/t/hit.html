@@ -46,8 +46,8 @@
             var src = "";
             var s = (stop * timeout);
             var cokie = googleClientId == "" ? cokname + repid : googleClientId;
-
-            src = "/t/logs.ashx?c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
+            var sessionid = cokname + repid + "." + random;
+            src = "/t/logs.ashx?ses=" + sessionid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
             var src = src + repid + "&r=" + random;
             if (ToSubmitGa(repid, true) || isvalid == true) {
                 call(src);
@@ -125,7 +125,6 @@
             m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
         })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-        //ga('create', 'UA-80360653-1', 'imaot.co.il');
         ga('create', 'UA-41590038-1', {
             'cookieExpires': expiredays * 24 * 3600 * 1000// Time in seconds.
         });
@@ -150,7 +149,14 @@
         });
 
         setTimeout(function () {
-            forceGooTrack(false, 'Timeout');
+            if (googleClientId != "") {
+                //second chance
+                setTimeout(function () {
+                    forceGooTrack(false, 'Timeout_Retry');
+                }, timeout);
+            }
+            else
+                forceGooTrack(false, 'Timeout');
 
         }, retrytimeout);
 
