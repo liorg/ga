@@ -2,19 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
-
 </head>
 <body>
-    <img id="img" src="" />
     <script>
         var hasCallback = false;
         var gaCallback;
         var expiredays = 1;
-        var timeout = 500; // ms
-        var retrytimeout = 700; // ms
-        var cokname = "gog_xifx_";
+        var timeout = 1000; // ms
+        var retrytimeout = 2000; // ms
+        var cokname = "gog_ip_";
         var retry = false;
         var stop = 1;
+        var googleClientId = "";
 
         var qs = (function (a) {
             if (a == "") return {};
@@ -30,32 +29,61 @@
         })(window.location.search.substr(1).split('&'));
 
         var repid = qs["t"];
+        var random = qs["r"];
 
         window.onunload = function () {
             debugger;
-            forceGooTrack(false);
+            forceGooTrack(false, 'UnLoad');
         }
 
-        function forceGooTrack(isvalid) {
-            if (!hasCallback) {
-                debugger;
-                hasCallback = true;
-                if (isvalid) {
-                    imgSrc = "/t/gaj.ashx?t=";
-                }
-                else {
-                    var s = (stop * timeout);
-                    imgSrc = "/t/nogaj.ashx?h=" + s + "&t=";
-                }
-                if (ToSubmitGa(repid, true)) {
-                    imgSrc = document.getElementById("img").src = imgSrc + repid;
-                }
+        function forceGooTrack(isvalid, action) {
+            var track = "yes";
+            if (isvalid == true)
+                track = "no";
+
+            // if (!hasCallback) {
+            debugger;
+            var src = "";
+            var s = (stop * timeout);
+            var cokie = googleClientId == "" ? cokname + repid : googleClientId;
+
+            src = "/t/logs.ashx?c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
+            var src = src + repid + "&r=" + random;
+            if (ToSubmitGa(repid, true) || isvalid == true) {
+                call(src);
             }
+
+            //hasCallback = true;
+
+            //if (!isvalid || googleClientId == "")
+            //    debugger;
+            //    window['ga-disable-UA-57229912-1'] = true;//prevent duplicate
+            // }
         }
+
         window.onload = function () {
             setInterval(function () {
                 stop++;
             }, timeout);
+        }
+
+        function call(file) {
+            var xhttp;
+            if (window.XMLHttpRequest) {
+                // code for modern browsers
+                xhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    //ok
+                    debugger;
+                }
+            };
+            xhttp.open("GET", file, false);
+            xhttp.send();
         }
 
         function getCookieGa(NameOfCookie) {
@@ -79,7 +107,7 @@
 
         function ToSubmitGa(s, isga) {
             debugger;
-            var cokii = isga == true ? cokname : coknameNoGoo;
+            var cokii = cokname;
             if (getCookieGa(cokii + s)) {
                 return false;
             }
@@ -98,24 +126,34 @@
         })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
         //ga('create', 'UA-80360653-1', 'imaot.co.il');
-        ga('create', 'UA-80360653-1', {
+        ga('create', 'UA-41590038-1', {
             'cookieExpires': expiredays * 24 * 3600 * 1000// Time in seconds.
         });
-        ga('send', 'pageview', 'recipe/details/' + repid, {
-            'hitCallbackTimeout': timeout, // ms
+
+        ga('send', 'pageview', {
+            'page': 'Book/Page/' + repid,
+            'title': 'xRecipe Num ' + repid,// window.parent.document.title,
+            //'hitCallbackTimeout': timeout, // ms
             'hitCallbackFail': function () {
                 //Unable to send Google Analytics data
-                forceGooTrack(false);
+                forceGooTrack(false, 'hitCallbackFail');
             },
             'hitCallback': function () {
                 debugger;
-                forceGooTrack(true);
+                forceGooTrack(true, 'hitCallback');
             }
         });
+
+        ga(function (tracker) {
+            if (tracker != null)
+                googleClientId = tracker.get('clientId');
+        });
+
         setTimeout(function () {
-             forceGooTrack(false);
-           
+            forceGooTrack(false, 'Timeout');
+
         }, retrytimeout);
+
     </script>
 </body>
 </html>
