@@ -5,10 +5,15 @@
 }
 
 <h2>Index</h2>
+@section GoogleAnalyticsObject {
+
+}
 @section iframega
 {
-    <iframe height="0" width="0" id="gaframe" src="/t/hit.html?t=@Model.Recipe.RecipeId"></iframe>
-}
-@section GoogleAnalyticsObject{
-   
+    @{
+        int random = new Random().Next(int.MinValue, int.MaxValue);
+
+
+        <iframe height="0" width="0" id="gaframe" src="/t/hit.html?t=@Model.Recipe.RecipeId&r=@random"></iframe>
+    }
 }

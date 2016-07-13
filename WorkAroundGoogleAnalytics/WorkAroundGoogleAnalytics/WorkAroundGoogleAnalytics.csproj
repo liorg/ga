@@ -165,6 +165,7 @@
     <Content Include="t\nogaj.ashx" />
     <Content Include="t\logs.ashx" />
     <Content Include="t\logs_ךםשג.ashx" />
+    <Content Include="t\logs3.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

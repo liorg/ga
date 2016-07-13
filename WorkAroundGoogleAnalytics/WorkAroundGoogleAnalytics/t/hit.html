@@ -14,7 +14,7 @@
         var retry = false;
         var stop = 1;
         var googleClientId = "";
-
+        var googleSupport = true;
         var qs = (function (a) {
             if (a == "") return {};
             var b = {};
@@ -38,17 +38,6 @@
 
         window.onload = function () {
             debugger;
-            //   //no need
-            //var src = "";
-            //var track = "no";
-            //var s = (stop * timeout);
-            //var action = "load";
-            //var cokie = googleClientId == "" ? cokname + repid : googleClientId;
-            //var sessionid = cokname + repid + "." + random;
-            //src = "/t/logs.ashx?lo=yes&ses=" + sessionid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
-            //var src = src + repid + "&r=" + random;
-         
-            //call(src, false);
             setInterval(function () {
                 stop++;
             }, timeout);
@@ -57,16 +46,18 @@
 
         function forceGooTrack(isvalid, action) {
             var track = "yes";
-            if (isvalid == true)
+            var hasCokies = ToSubmitGa(repid, true);//set cokies
+            if (isvalid == true) {
                 track = "no";
+            }
             debugger;
             var src = "";
             var s = (stop * timeout);
             var cokie = googleClientId == "" ? cokname + repid : googleClientId;
             var sessionid = cokname + repid + "." + random;
-            src = "/t/logs.ashx?lo=no&ses=" + sessionid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
+            src = "/t/logs3.ashx?lo=no&ses=" + sessionid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
             var src = src + repid + "&r=" + random;
-            if (ToSubmitGa(repid, true) || isvalid == true) {
+            if (hasCokies || isvalid == true) {
                 call(src, false);
             }
         }
@@ -129,13 +120,13 @@
             m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
         })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-        ga('create', 'UA-41590038-1', {
+        ga('create', 'UA-57229912-1', {
             'cookieExpires': expiredays * 24 * 3600 * 1000// Time in seconds.
         });
 
         ga('send', 'pageview', {
             'page': 'Book/Page/' + repid,
-            'title': 'xRecipe Num ' + repid,// window.parent.document.title,
+            'title': window.parent.document.title,
             //'hitCallbackTimeout': timeout, // ms
             'hitCallbackFail': function () {
                 //Unable to send Google Analytics data
@@ -151,18 +142,11 @@
             if (tracker != null)
                 googleClientId = tracker.get('clientId');
         });
-
         setTimeout(function () {
-            if (googleClientId != "") {
-                //second chance
-                setTimeout(function () {
-                    forceGooTrack(false, 'Timeout_Retry');
-                }, timeout);
-            }
-            else
-                forceGooTrack(false, 'Timeout');
-
+            forceGooTrack(false, 'TimeoutHappened');
         }, retrytimeout);
+
+
 
     </script>
 </body>
