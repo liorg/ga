@@ -132,6 +132,7 @@
     <Content Include="scripts\modernizr-2.6.2.js" />
     <Content Include="static\s.html" />
     <Content Include="t\hit.html" />
+    <Content Include="t\hit4.html" />
     <Content Include="t\sql.sql" />
     <Content Include="t\X.html" />
     <Content Include="Web.config" />
@@ -164,8 +165,8 @@
     <Content Include="t\gaj.ashx" />
     <Content Include="t\nogaj.ashx" />
     <Content Include="t\logs.ashx" />
-    <Content Include="t\logs_ךםשג.ashx" />
     <Content Include="t\logs3.ashx" />
+    <Content Include="t\logs4.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -10,11 +10,12 @@
         var expiredays = 1;
         var timeout = 1000; // ms
         var retrytimeout = 2000; // ms
-        var cokname = "gog_ip_";
+        var cokname = "imaotxcookies";
         var retry = false;
         var stop = 1;
         var googleClientId = "";
-        var googleSupport = true;
+        var hasNoCallAlready = true;
+
         var qs = (function (a) {
             if (a == "") return {};
             var b = {};
@@ -44,21 +45,32 @@
 
         }
 
+        function guid() {
+            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+              s4() + '-' + s4() + s4() + s4();
+        }
+
+        function s4() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+              .toString(16)
+              .substring(1);
+        }
+
         function forceGooTrack(isvalid, action) {
             var track = "yes";
-            var hasCokies = ToSubmitGa(repid, true);//set cokies
+            var mySessionValue = getMySessionValue();
             if (isvalid == true) {
                 track = "no";
             }
-            debugger;
             var src = "";
             var s = (stop * timeout);
-            var cokie = googleClientId == "" ? cokname + repid : googleClientId;
-            var sessionid = cokname + repid + "." + random;
-            src = "/t/logs3.ashx?lo=no&ses=" + sessionid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
+            var cokie = googleClientId == "" ? mySessionValue : googleClientId;
+            var pageid = repid + "." + random;
+            src = "/t/logs4.ashx?lo=no&ses=" + pageid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&t=";
             var src = src + repid + "&r=" + random;
-            if (hasCokies || isvalid == true) {
+            if (hasNoCallAlready == true || isvalid == true) {
                 call(src, false);
+                hasNoCallAlready = false;
             }
         }
 
@@ -74,14 +86,13 @@
             xhttp.onreadystatechange = function () {
                 if (xhttp.readyState == 4 && xhttp.status == 200) {
                     //ok
-                    debugger;
                 }
             };
             xhttp.open("GET", file, async);
             xhttp.send();
         }
 
-        function getCookieGa(NameOfCookie) {
+        function getCookie(NameOfCookie) {
             if (document.cookie.length > 0) {
                 begin = document.cookie.indexOf(NameOfCookie + "=");
                 if (begin != -1) {
@@ -94,23 +105,27 @@
             return null;
         }
 
-        function setCookieGa(NameOfCookie, value) {
+        function setCookie(NameOfCookie, value) {
             var ExpireDate = new Date();
             ExpireDate.setTime(ExpireDate.getTime() + (expiredays * 24 * 3600 * 1000));
             document.cookie = NameOfCookie + "=" + escape(value) + ((expiredays == null) ? "" : "; expires=" + ExpireDate.toGMTString());
         }
 
-        function ToSubmitGa(s, isga) {
+        function getMySessionValue() {
             debugger;
-            var cokii = cokname;
-            if (getCookieGa(cokii + s)) {
-                return false;
-            }
+            var sessionValue = getCookie(cokname);
+            if (sessionValue != null)
+                return sessionValue;
             else {
-                setCookieGa(cokii + s, "ok");
-                return true;
+                sessionValue = guid();
+                setCookie(cokname, sessionValue);
             }
+            return sessionValue;
         }
+
+        setTimeout(function () {
+            forceGooTrack(false, 'TimeoutHappened');
+        }, retrytimeout);
 
         //https://www.domsammut.com/code/workaround-for-when-the-hitcallback-function-does-not-receive-a-response-analytics-js
         (function (i, s, o, g, r, a, m) {
@@ -142,12 +157,6 @@
             if (tracker != null)
                 googleClientId = tracker.get('clientId');
         });
-
-        setTimeout(function () {
-            forceGooTrack(false, 'TimeoutHappened');
-        }, retrytimeout);
-
-
 
     </script>
 </body>
