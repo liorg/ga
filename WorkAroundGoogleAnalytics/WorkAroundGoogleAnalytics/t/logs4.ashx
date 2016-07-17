@@ -47,7 +47,7 @@ public class LogsGoo2 : IHttpHandler
                 foreach (var expirLog in expList)
                 {
                     TimeSpan ts = cu - expirLog.exdt;
-                     expirLog.action="TimeoutHappened("+ts.Seconds.ToString()+"s)";
+                    expirLog.action = "TimeoutHappened(" + ts.Seconds.ToString() + "s)";
                     LogAndTrack(expirLog);
                     sessions.Enqueue(expirLog.sessionId);
                 }
@@ -65,22 +65,50 @@ public class LogsGoo2 : IHttpHandler
         {
             string title = "",
                     responseLog = "OK";
-            if (log.action == "TimeoutHappened")
+            //if (log.action == "TimeoutHappened")
+            if (log.track == "yes")
             {
-                log.action = "TimeoutHappened(waiting..)";
+                log.action = log.action + "(waiting..)";
                 _timeoutData.TryAdd(log.sessionId, log);
                 return responseLog + " " + log.sessionId + " add to timeout";
             }
             LogModel logTemp;
             _timeoutData.TryRemove(log.sessionId, out logTemp);
             if (logTemp != null)
-                responseLog = responseLog + " " + log.sessionId + " remove it..";
-            
+            {
+                log.action = log.action + "(remove old track..)";
+                responseLog = responseLog + " " + log.sessionId + " remove old track..";
+            }
             try
             {
+                int count = 0;
                 SqlCommand command = null;
                 using (SqlConnection connection = new SqlConnection(@"Password=1;Persist Security Info=True;User ID=cw;Initial Catalog=imaotDb;Data Source=10.130.39.10"))
                 {
+                    connection.Open();
+                    try
+                    {
+                        var getCokieCount = "select count(*) from [dbo].[RecipeViewsLogs] (nolock) where  CookieId ='" + log.cokname + "' and RecipeId=" + log.rapid.ToString();
+                        using (command = connection.CreateCommand())
+                        {
+                            command.CommandText = getCokieCount;
+                            var obj = command.ExecuteScalar();
+                            if (obj is int)
+                            {
+                                count = (int)obj;
+                                responseLog = responseLog + " ,COUNT=" + count.ToString();
+                            }
+                        }
+                    }
+                    catch (Exception exD)
+                    {
+                        responseLog = responseLog + " error on count=>" + exD.ToString();
+                    }
+
+                    if (count == 0)
+                    {
+                        // for update current view
+                    }
                     connection.Open();
                     using (command = connection.CreateCommand())
                     {
@@ -104,11 +132,10 @@ public class LogsGoo2 : IHttpHandler
                         command.Parameters.AddWithValue("@IsMobile", log.isMobile);
                         command.Parameters.AddWithValue("@IsCrawler", log.isCrawler);
                         command.Parameters.AddWithValue("@CookieId", log.cokname);
-
                         command.Parameters.AddWithValue("@IdentityName", log.identy);
                         command.Parameters.AddWithValue("@IsAuthenticated", log.isAuthenticated);
                         command.Parameters.AddWithValue("@Path", log.path);
-                        command.Parameters.AddWithValue("@QueryString", "qv3," + log.sessionId + "," + log.action + "");
+                        command.Parameters.AddWithValue("@QueryString", "qv5," + log.sessionId + "," + log.action + ","+count.ToString());
                         command.Parameters.AddWithValue("@TimeStamp", log.dt);
                         command.Parameters.AddWithValue("@Year", (Int16)log.dt.Year);
                         command.Parameters.AddWithValue("@Month", (Int16)log.dt.Month);
@@ -176,7 +203,7 @@ public class LogsGoo2 : IHttpHandler
             }
             if (cokname == "")
                 cokname = "mycokname_" + Guid.NewGuid().ToString();
-            
+
             var request = context.Request;
             getip = GetUserIP(context);
             identy = "";
