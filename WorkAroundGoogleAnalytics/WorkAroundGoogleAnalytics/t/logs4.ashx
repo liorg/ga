@@ -107,7 +107,7 @@ public class LogsGoo2 : IHttpHandler
 
                     if (count == 0)
                     {
-                        // for update current view
+                        // for update current view FOR Cookies !!!
                     }
                     connection.Open();
                     using (command = connection.CreateCommand())
@@ -135,7 +135,8 @@ public class LogsGoo2 : IHttpHandler
                         command.Parameters.AddWithValue("@IdentityName", log.identy);
                         command.Parameters.AddWithValue("@IsAuthenticated", log.isAuthenticated);
                         command.Parameters.AddWithValue("@Path", log.path);
-                        command.Parameters.AddWithValue("@QueryString", "qv5," + log.sessionId + "," + log.action + ","+count.ToString());
+                        command.Parameters.AddWithValue("@QueryString", "v5.1,Id=" + log.sessionId + ",Action=" + log.action + ",Cookie=" + log.cokname + ",Counter Session=" + count.ToString());
+                        //command.Parameters.AddWithValue("@QueryString", "qv5," + log.sessionId + "," + log.action + ","+count.ToString());
                         command.Parameters.AddWithValue("@TimeStamp", log.dt);
                         command.Parameters.AddWithValue("@Year", (Int16)log.dt.Year);
                         command.Parameters.AddWithValue("@Month", (Int16)log.dt.Month);
