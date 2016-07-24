@@ -47,6 +47,7 @@ public class LogsGoo2 : IHttpHandler
                 foreach (var expirLog in expList)
                 {
                     TimeSpan ts = cu - expirLog.exdt;
+                    expirLog.track = "force";
                     expirLog.action = "TimeoutHappened(" + ts.Seconds.ToString() + "s)";
                     LogAndTrack(expirLog);
                     sessions.Enqueue(expirLog.sessionId);
@@ -145,7 +146,7 @@ public class LogsGoo2 : IHttpHandler
 
                         try
                         {
-                            if (log.track == "yes" && !log.isCrawler)
+                            if (log.track == "force" && !log.isCrawler)
                                 TrackEvent(log.getip, log.userAgent, log.t, log.timeout, log.cokname, title);
                         }
                         catch (Exception ex) { responseLog = responseLog + " " + ex.ToString(); }
