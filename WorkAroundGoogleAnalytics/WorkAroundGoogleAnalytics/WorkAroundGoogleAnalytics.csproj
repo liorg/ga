@@ -131,6 +131,7 @@
     <Content Include="scripts\jquery-1.10.2.min.js" />
     <Content Include="scripts\modernizr-2.6.2.js" />
     <Content Include="static\s.html" />
+    <Content Include="t\hit7.html" />
     <Content Include="t\hit.html" />
     <Content Include="t\hit4.html" />
     <Content Include="t\sql.sql" />
@@ -167,6 +168,7 @@
     <Content Include="t\logs.ashx" />
     <Content Include="t\logs3.ashx" />
     <Content Include="t\logs4.ashx" />
+    <Content Include="t\logs7.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

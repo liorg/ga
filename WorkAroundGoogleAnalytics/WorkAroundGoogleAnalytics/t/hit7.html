@@ -1,0 +1,284 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <!--https://gist.github.com/cou929/7973956 -->
+    <script>
+        function retry(isDone, next) {
+            var current_trial = 0, max_retry = 50, interval = 10, is_timeout = false;
+            var id = window.setInterval(
+                function () {
+                    if (isDone()) {
+                        window.clearInterval(id);
+                        next(is_timeout);
+                    }
+                    if (current_trial++ > max_retry) {
+                        window.clearInterval(id);
+                        is_timeout = true;
+                        next(is_timeout);
+                    }
+                },
+                10
+            );
+        }
+
+        //function isIE10OrLater(user_agent) {
+        //    var ua = user_agent.toLowerCase();
+        //    if (ua.indexOf('msie') === 0 && ua.indexOf('trident') === 0) {
+        //        return false;
+        //    }
+        //    var match = /(?:msie|rv:)\s?([\d\.]+)/.exec(ua);
+        //    if (match && parseInt(match[1], 10) >= 10) {
+        //        return true;
+        //    }
+        //    return false;
+        //}
+        function isIE9OrBelow (){
+            return /MSIE\s/.test(navigator.userAgent) && parseFloat(navigator.appVersion.split("MSIE")[1]) < 10;
+        }
+        function isIE10OrLater(user_agent) {
+            var ua = user_agent.toLowerCase();
+            if (ua.indexOf('msie') === 0 && ua.indexOf('trident') === 0) {
+                return false;
+            }
+            var match = /(?:msie|rv:)\s?([\d\.]+)/.exec(ua);
+            if (match && parseInt(match[1], 10) >= 10) { return true; }
+            var edge = /edge/.exec(ua); if (edge && edge[0] == "edge") {
+                return true;
+            } return false;
+        }
+
+        function detectPrivateMode(callback) {
+            var is_private;
+
+            if (window.webkitRequestFileSystem) {
+                window.webkitRequestFileSystem(
+                    window.TEMPORARY, 1,
+                    function () {
+                        is_private = false;
+                    },
+                    function (e) {
+                        console.log(e);
+                        is_private = true;
+                    }
+                );
+            } else if (window.indexedDB && /Firefox/.test(window.navigator.userAgent)) {
+                var db;
+                try {
+                    db = window.indexedDB.open('test');
+                } catch (e) {
+                    is_private = true;
+                }
+
+                if (typeof is_private === 'undefined') {
+                    retry(
+                        function isDone() {
+                            return db.readyState === 'done' ? true : false;
+                        },
+                        function next(is_timeout) {
+                            if (!is_timeout) {
+                                is_private = db.result ? false : true;
+                            }
+                        }
+                    );
+                }
+            } else if (isIE10OrLater(window.navigator.userAgent)) {
+                is_private = false;
+                try {
+                    if (!window.indexedDB) {
+                        is_private = true;
+                    }
+                } catch (e) {
+                    is_private = true;
+                }
+            } else if (window.localStorage && /Safari/.test(window.navigator.userAgent)) {
+                try {
+                    window.localStorage.setItem('test', 1);
+                } catch (e) {
+                    is_private = true;
+                }
+
+                if (typeof is_private === 'undefined') {
+                    is_private = false;
+                    window.localStorage.removeItem('test');
+                }
+            }
+            else if (isIE9OrBelow()) {
+                debugger;
+                is_private = false;
+            }
+
+            retry(
+                function isDone() {
+                    debugger;
+                    return typeof is_private !== 'undefined' ? true : false;
+                },
+                function next(is_timeout) {
+                    callback(is_private);
+                }
+            );
+        }
+
+    </script>
+    <!--https://gist.github.com/cou929/7973956 -->
+
+    <script>
+        detectPrivateMode(function (inprivate) {
+            var hasCallback = false;
+            var gaCallback;
+            var expiredays = 1;
+            var timeout = 1000; // ms
+            var retrytimeout = 2000; // ms
+            var cokname = "imaotxcookies";
+            var retry = false;
+            var stop = 1;
+            var googleClientId = "";
+            var hasNoCallAlready = true;
+
+            var qs = (function (a) {
+                if (a == "") return {};
+                var b = {};
+                for (var i = 0; i < a.length; ++i) {
+                    var p = a[i].split('=', 2);
+                    if (p.length == 1)
+                        b[p[0]] = "";
+                    else
+                        b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+                }
+                return b;
+            })(window.location.search.substr(1).split('&'));
+
+            var repid = qs["t"];
+            var random = qs["r"];
+
+            window.onunload = function () {
+                debugger;
+                forceGooTrack(false, 'UnLoad');
+            }
+
+            window.onload = function () {
+                debugger;
+                setInterval(function () {
+                    stop++;
+                }, timeout);
+
+            }
+
+            function guid() {
+                return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+                  s4() + '-' + s4() + s4() + s4();
+            }
+
+            function s4() {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                  .toString(16)
+                  .substring(1);
+            }
+
+            function forceGooTrack(isvalid, action) {
+                var track = "yes";
+                var mySessionValue = getMySessionValue();
+                if (isvalid == true) {
+                    track = "no";
+                }
+                var src = "";
+                var s = (stop * timeout);
+                var cokie = googleClientId == "" ? mySessionValue : googleClientId;
+                var pageid = repid + "." + random;
+                src = "/t/logs7.ashx?lo=no&ses=" + pageid + "&c=" + cokie + "&ta=" + track + "&a=" + action + "&h=" + s + "&pr=" + inprivate + "&t=";
+                var src = src + repid + "&r=" + random;
+                if (hasNoCallAlready == true || isvalid == true) {
+                    call(src, false);
+                    hasNoCallAlready = false;
+                }
+            }
+
+            function call(file, async) {
+                var xhttp;
+                if (window.XMLHttpRequest) {
+                    // code for modern browsers
+                    xhttp = new XMLHttpRequest();
+                } else {
+                    // code for IE6, IE5
+                    xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                xhttp.onreadystatechange = function () {
+                    if (xhttp.readyState == 4 && xhttp.status == 200) {
+                        //ok
+                    }
+                };
+                xhttp.open("GET", file, async);
+                xhttp.send();
+            }
+
+            function getCookie(NameOfCookie) {
+                if (document.cookie.length > 0) {
+                    begin = document.cookie.indexOf(NameOfCookie + "=");
+                    if (begin != -1) {
+                        begin += NameOfCookie.length + 1;
+                        end = document.cookie.indexOf(";", begin);
+                        if (end == -1) end = document.cookie.length;
+                        return unescape(document.cookie.substring(begin, end));
+                    }
+                }
+                return null;
+            }
+
+            function setCookie(NameOfCookie, value) {
+                var ExpireDate = new Date();
+                ExpireDate.setTime(ExpireDate.getTime() + (expiredays * 24 * 3600 * 1000));
+                document.cookie = NameOfCookie + "=" + escape(value) + ((expiredays == null) ? "" : "; expires=" + ExpireDate.toGMTString());
+            }
+
+            function getMySessionValue() {
+                debugger;
+                var sessionValue = getCookie(cokname);
+                if (sessionValue != null)
+                    return sessionValue;
+                else {
+                    sessionValue = guid();
+                    setCookie(cokname, sessionValue);
+                }
+                return sessionValue;
+            }
+
+            setTimeout(function () {
+                forceGooTrack(false, 'TimeoutHappened');
+            }, retrytimeout);
+
+            //https://www.domsammut.com/code/workaround-for-when-the-hitcallback-function-does-not-receive-a-response-analytics-js
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+            ga('create', 'UA-57229912-1', {
+                'cookieExpires': expiredays * 24 * 3600 * 1000// Time in seconds.
+            });
+
+            ga('send', 'pageview', {
+                'page': 'Book/Page/' + repid,
+                'title': window.parent.document.title,
+                //'hitCallbackTimeout': timeout, // ms
+                'hitCallbackFail': function () {
+                    //Unable to send Google Analytics data
+                    forceGooTrack(false, 'hitCallbackFail');
+                },
+                'hitCallback': function () {
+                    debugger;
+                    forceGooTrack(true, 'hitCallback');
+                }
+            });
+
+            ga(function (tracker) {
+                if (tracker != null)
+                    googleClientId = tracker.get('clientId');
+            });
+        });
+    </script>
+</body>
+</html>
