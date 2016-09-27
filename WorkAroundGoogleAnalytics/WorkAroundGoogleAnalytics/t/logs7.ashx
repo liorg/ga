@@ -83,6 +83,7 @@ public class LogsGoo2 : IHttpHandler
             try
             {
                 int count = 0;
+                int viewsAmount = 0;
                 SqlCommand command = null;
                 using (SqlConnection connection = new SqlConnection(@"Password=1;Persist Security Info=True;User ID=cw;Initial Catalog=imaotDb;Data Source=10.130.39.10"))
                 {
@@ -109,6 +110,24 @@ public class LogsGoo2 : IHttpHandler
                     if (count == 0)
                     {
                         // for update current view FOR Cookies !!!
+                        if (log.inPrivate != "true")//if you want not to calc private browser surface
+                        {
+                            var getrecipe = "select title,ViewsAmount from [dbo].[SatisitcsRecipes]  where RecipeId=" + log.rapid.ToString();
+                            using (command = new SqlCommand(getrecipe, connection))
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                reader.Read();
+                                title = reader.GetString(0);
+                                viewsAmount = reader.GetInt32(1);
+                            }
+                            viewsAmount = viewsAmount + 1;
+                            responseLog = responseLog + " ,viewsAmount=" + viewsAmount.ToString();
+                            var update = "update [dbo].[Recipes] set ViewsAmount=" + viewsAmount.ToString() + " where RecipeId=" + log.rapid.ToString();
+                            using (command = new SqlCommand(update, connection))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+                        }
                     }
                     connection.Open();
                     using (command = connection.CreateCommand())
@@ -136,10 +155,10 @@ public class LogsGoo2 : IHttpHandler
                         command.Parameters.AddWithValue("@IdentityName", log.identy);
                         command.Parameters.AddWithValue("@IsAuthenticated", log.isAuthenticated);
                         command.Parameters.AddWithValue("@Path", log.path);
-                       // command.Parameters.AddWithValue("@QueryString", "v5.1,Id=" + log.sessionId + ",Action=" + log.action + ",Cookie=" + log.cokname + ",Counter Session=" + count.ToString());
+                        // command.Parameters.AddWithValue("@QueryString", "v5.1,Id=" + log.sessionId + ",Action=" + log.action + ",Cookie=" + log.cokname + ",Counter Session=" + count.ToString());
                         //command.Parameters.AddWithValue("@QueryString", "qv5," + log.sessionId + "," + log.action + ","+count.ToString());
                         command.Parameters.AddWithValue("@QueryString", "v7.3 inPrivate=" + log.inPrivate + ",Counter Session=" + count.ToString() + ", sessionId=" + log.sessionId + ",Action=" + log.action + ",Cookie=" + log.cokname);
-                        
+
                         command.Parameters.AddWithValue("@TimeStamp", log.dt);
                         command.Parameters.AddWithValue("@Year", (Int16)log.dt.Year);
                         command.Parameters.AddWithValue("@Month", (Int16)log.dt.Month);
